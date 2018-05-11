@@ -69,12 +69,52 @@ app.post('/articles/add',(req,res)=>{
     })
     // console.log(req.body.title );
 })
+
 // get single article
 app.get('/article/:id',(req,res)=>{
     Article.findById(req.params.id,(err,article)=>{
       res.render("article",{
           article:article
       });  
+    })
+})
+// load edit form
+app.get('/article/edit/:id',(req,res)=>{
+    Article.findById(req.params.id,(err,article)=>{
+      res.render("edit_article",{
+          title:"Edit article",
+          article:article
+      });  
+    })
+})
+// update submit
+
+app.post('/articles/edit/:id',(req,res)=>{
+    let article = {};
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+    let query ={_id :req.params.id}
+    Article.update(query,article,(err)=>{
+       if(err){
+        console.log(err);
+        return;
+       }else{
+        res.redirect('/')
+       }
+    })
+    // console.log(req.body.title );
+})
+
+// delete article 
+app.delete('/article/:id',(req, res)=>{
+    let query = {_id :req.params.id}
+    Article.remove(query,(err)=>{
+        if (err) {
+            console.log(err);
+            
+        }
+        res.send('success')
     })
 })
 // start server
