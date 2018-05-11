@@ -1,0 +1,23 @@
+{
+  "name": "nodekb",
+  "version": "1.0.0",
+  "description": "simple app with authentification and adding or buying some articles ",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "keywords": [],
+  "author": "MadjidYacini",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "mongoose": "^5.1.0",
+    "nodemon": "^1.17.4",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
+  }
+}
