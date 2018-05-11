@@ -3,10 +3,31 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        link(href="/bower_components/bootstrap/dist/css/bootstrap.css", rel="stylesheet")
+        
         title Document
     body
-        block content
-    br
-    hr
-    footer
-        p copyright &copy; 2018
+        nav.navbar.navbar-expand-md.navbar-dark.bg-dark.fixed-top
+           
+            a.navbar-brand(href='#') nodeKB
+            
+            a.nav-link(href='/')
+                | Home 
+                
+            a.nav-link(href='/articles/add')
+                | ADD 
+              
+            
+        
+        .container
+            br
+            br
+            br
+            br
+            block content
+            br
+            br
+            br
+            hr
+            footer
+                 p copyright &copy; 2018

@@ -24,10 +24,14 @@ const Article = require('./models/article')
 
 // body parser middleWare
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+// set a public folder 
+app.use(express.static(path.join(__dirname,'public')));
+
 // load view engine
 app.set('views',path.join(__dirname,'views'));
 app.set('view engine','pug');
@@ -37,7 +41,7 @@ app.get('/',(req,res)=>{
      if (err) {
          console.log(err);
      }else{
-    res.render("index", { title: "madjid ouchen", articles: articles });
+    res.render("index", { title: "Articles", articles: articles });
 
  }})
     
@@ -64,6 +68,14 @@ app.post('/articles/add',(req,res)=>{
        }
     })
     // console.log(req.body.title );
+})
+// get single article
+app.get('/article/:id',(req,res)=>{
+    Article.findById(req.params.id,(err,article)=>{
+      res.render("article",{
+          article:article
+      });  
+    })
 })
 // start server
 
