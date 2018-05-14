@@ -5,6 +5,7 @@ const bodyParser= require("body-parser");
 const session = require("express-session");
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
+const articles = require("./routes/articles");
 
 // connction to mongodb
 
@@ -27,8 +28,7 @@ const app = express();
 const Article = require('./models/article')
 
 //calling article route 
-// const articles = require('./routes/articles');
-// app.use('/articles',articles)
+
 // body parser middleWare
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -61,21 +61,28 @@ app.use(function(req, res, next) {
 });
 
 // express validator midlleware
-app.use(expressValidator({
-    errorFormatter: function (param,msg,value) {
-        var namespace =param.split('.')
-        ,root = namespace.shift()
-        ,formParam = root;
-        while (namespace.length) {
-            formParam+='['+namespace.shift()+']';
-        }
-        return{
-            param : formParam,
-            msg : msg ,
-            value :value
-        }
+app.use(
+  expressValidator({
+    errorFormatter: function(param, msg, value) {
+      var namespace = param.split("."),
+        root = namespace.shift(),
+        formParam = root;
+
+      while (namespace.length) {
+        formParam += "[" + namespace.shift() + "]";
+      }
+      return {
+        param: formParam,
+        msg: msg,
+        value: value
+      };
     }
-}))
+  })
+);
+// route files
+
+app.use("/articles", articles);
+
 // home route
 app.get('/',(req,res)=>{
  Article.find({},(err, articles)=>{
@@ -83,94 +90,13 @@ app.get('/',(req,res)=>{
          console.log(err);
      }else{
     res.render("index", { title: "Articles", articles: articles });
+    console.log("object");
 
  }})
     
 })
-//add route 
-app.get('/articles/add',(req,res)=>{
-    res.render("add_article",{
-        title : "add articles"
-    }) 
-})
-// add submit post Route
-app.post('/articles/add',(req,res)=>{
- req.checkBody("title", "the title is required").notEmpty();
- req.checkBody("author", "the author is required").notEmpty();
- req.checkBody("body", "the body is required").notEmpty();
 
- let errors = req.validationErrors();
- console.log("toooooz", req.body);
 
- if (errors) {
-   res.render("add_article", { title: "add articles", errors: errors });
- } else {
-   let article = new Article();
-   article.title = req.body.title;
-   article.author = req.body.author;
-   article.body = req.body.body;
-
-   article.save(err => {
-     if (err) {
-       console.log(err);
-       return;
-     } else {
-       req.flash("success", "article added");
-       res.redirect("/");
-     }
-   });
- }
-    // console.log(req.body.title );
-})
-
-// get single article
-app.get('/articles/:id',(req,res)=>{
-    Article.findById(req.params.id,(err,article)=>{
-      res.render("article",{
-          article:article
-      });  
-    })
-})
-// load edit form
-app.get('/articles/edit/:id',(req,res)=>{
-    Article.findById(req.params.id,(err,article)=>{
-      res.render("edit_article",{
-          title:"Edit article",
-          article:article
-      });  
-    })
-})
-// update submit
-
-app.post('/articles/edit/:id',(req,res)=>{
-    let article = {};
-    article.title = req.body.title;
-    article.author = req.body.author;
-    article.body = req.body.body;
-    let query ={_id :req.params.id}
-    Article.update(query,article,(err)=>{
-       if(err){
-        console.log(err);
-        return;
-       }else{
-       req.flash("success", "article updated");
-        res.redirect('/')
-       }
-    })
-    // console.log(req.body.title );
-})
-
-// delete article 
-app.delete('/article/:id',(req, res)=>{
-    let query = {_id :req.params.id}
-    Article.remove(query,(err)=>{
-        if (err) {
-            console.log(err);
-            
-        }
-        res.send('success')
-    })
-})
 // start server
 
 app.listen(3000,()=>{
