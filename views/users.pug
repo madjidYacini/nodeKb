@@ -1,0 +1,12 @@
+extends layout
+
+block content
+   
+    
+    h1 user List
+    
+    ul.list-group
+     each user , i in users 
+        li.list-group-item
+            a(href="#" )= user.name 
+            a(href="#")=user.password

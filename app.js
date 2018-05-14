@@ -6,6 +6,8 @@ const session = require("express-session");
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const articles = require("./routes/articles");
+const users = require("./routes/users");
+
 
 // connction to mongodb
 
@@ -82,6 +84,7 @@ app.use(
 // route files
 
 app.use("/articles", articles);
+app.use("/users",users);
 
 // home route
 app.get('/',(req,res)=>{
@@ -90,7 +93,7 @@ app.get('/',(req,res)=>{
          console.log(err);
      }else{
     res.render("index", { title: "Articles", articles: articles });
-    console.log("object");
+    // console.log("object");
 
  }})
     
