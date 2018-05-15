@@ -7,11 +7,11 @@ const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const articles = require("./routes/articles");
 const users = require("./routes/users");
-
-
+const config = require("./config/database")
+const passport = require("passport")
 // connction to mongodb
 
-mongoose.connect('mongodb://localhost/nodekb');
+mongoose.connect(config.database);
 let db = mongoose.connection;
 
 // check connection
@@ -81,7 +81,16 @@ app.use(
     }
   })
 );
+// passport config
+require('./config/passport')(passport)
+ app.use(passport.initialize());
+ app.use(passport.session());
 // route files
+app.get('*',(req,res,next)=>{
+  res.locals.user=req.user || null;
+  next();
+  // console.log(req.user)
+})
 
 app.use("/articles", articles);
 app.use("/users",users);

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const passport = require("passport");
 // user model
 const User = require("../models/user");
 
@@ -95,39 +96,54 @@ bcrypt.genSalt(10, (err, salt) => {
 router.get('/login',(req,res)=>{
     res.render("login")
 })
-router.post('/login',(req,res)=>{
-  const email = req.body.email;
-  const password = req.body.password;
-  User.find({email : email})
-  .exec()
-  .then(user=>{
-    if (user.length <1) {
-      req.flash("danger", "user does not exists try again with your valid email");
-      res.redirect("/users/login");
-    }else{
-      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          req.flash("success", "hello you are connected");
-          res.redirect("/");
-        }
-      });
-    }
-  })
+// router.post('/login',(req,res)=>{
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   User.find({email : email})
+//   .exec()
+//   .then(user=>{
+//     if (user.length <1) {
+//       req.flash("danger", "user does not exists try again with your valid email");
+//       res.redirect("/users/login");
+//     }else{
+//       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+//         if (err) {
+//           console.log(err);
+//         } else {
+//           req.flash("success", "hello you are connected");
+//           res.redirect("/");
+//         }
+//       });
+//     }
+//   })
 
+// })
+
+
+router.post('/login',(req,res,next)=>{
+passport.authenticate('local',{
+   successRedirect:"/",
+    failureRedirect :"/users/login",
+    failureFlash : true  
+})(req,res,next)
 })
 
+// router.get('/userGet',(req,res)=>{
+//     User.find({},(err,users)=>{
+//         if (err) {
+//             console.log(err)
+//         }else{
 
-router.get('/userGet',(req,res)=>{
-    User.find({},(err,users)=>{
-        if (err) {
-            console.log(err)
-        }else{
+//             res.render("users",{users:users})
+//         }
+//     })
+// })
 
-            res.render("users",{users:users})
-        }
-    })
+router.get("/logout",(req,res)=>{
+  console.log(req.logout);
+  req.logout();
+  req.flash('success',"you are logged out");
+  res.redirect("/users/login")
 })
 
 module.exports=router
